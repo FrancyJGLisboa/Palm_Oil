@@ -159,6 +159,12 @@ decisionSupport::plot_distributions(mcSimulation_object = mcSimulation_results,
                                     vars = "trade_off",
                                     method = 'boxplot_density')
 
+#VIP
+pls_result <- plsr.mcSimulation(object = mcSimulation_results,
+                                resultName = names(mcSimulation_results$y)[3], ncomp = 1)
+input_table <- read.csv("C:/Users/erlan/Documents/Data/Example Code/Sample/palm_input_new.csv")
+
+plot_pls(pls_result, input_table = input_table, threshold = 0)
 
 #MCall <- read.table(file = "MCResults/mcSimulationResults.csv", 
                     #header = TRUE, sep  = ",")
