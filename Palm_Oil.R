@@ -31,9 +31,9 @@ po_decision_function <- function(x, varnames){
   environment_cost_tcl <- rep(0, n_years)
   total_po_benefit_TCL <- rep(0, n_years)
   tot_po_yield_non_tcl <- rep(0, n_years)
-  
+
   #Simulate the chance for risk events to occur during the simulation period
-  # po_risk <- chance_event(fire_risk, value_if = 1, n = n_years)
+ # po_risk <- chance_event(fire_risk, value_if = 1, n = n_years)
   
   # pre-calculate common random draws for two scenario model runs ####
   
@@ -82,14 +82,14 @@ po_decision_function <- function(x, varnames){
   FFB_price[8:25] <- vv(FFB_price_mature, var_FFB, 18)
   
   # benefits of palm oil
-  po_yield <- gompertz_yield(max_harvest = max_palm_harvest, 
-                             time_to_first_yield_estimate = immature_palm_est, 
-                             time_to_second_yield_estimate = mature_palm_est,
-                             first_yield_estimate_percent = immature_palm_yield_est,
-                             second_yield_estimate_percent = mature_palm_yield_est,
-                             n_years = n_years, 
-                             var_CV = 0, 
-                             no_yield_before_first_estimate = TRUE)
+   po_yield <- gompertz_yield(max_harvest = max_palm_harvest, 
+                            time_to_first_yield_estimate = immature_palm_est, 
+                            time_to_second_yield_estimate = mature_palm_est,
+                            first_yield_estimate_percent = immature_palm_yield_est,
+                            second_yield_estimate_percent = mature_palm_yield_est,
+                            n_years = n_years, 
+                            var_CV = 0, 
+                            no_yield_before_first_estimate = TRUE)
   
   tot_po_yield_non_tcl <- po_yield
   tot_po_benefit_non_tcl <- tot_po_yield_non_tcl * FFB_price
@@ -110,8 +110,8 @@ po_decision_function <- function(x, varnames){
   
   #NPV of palm oil plantation Tree Cover Loss
   NPV_TCL <- discount(total_po_benefit_TCL, 
-                      discount_rate = discount_rate, 
-                      calculate_NPV = TRUE)
+                     discount_rate = discount_rate, 
+                     calculate_NPV = TRUE)
   
   #Benefit of choosing agroforestry over maize monoculture
   tradeoff_benefit <- NPV_non_TCL - NPV_TCL
@@ -121,10 +121,12 @@ po_decision_function <- function(x, varnames){
                            discount_rate = discount_rate, 
                            calculate_NPV = TRUE )
   
-  #in the return list, one could indicate any outcome that they wish to see from the model
+    #in the return list, one could indicate any outcome that they wish to see from the model
   return(list(trade_off = NPV_tradeoff, 
               Non_TCL_NPV = NPV_non_TCL, 
-              TCL_NPV = NPV_TCL))
+              TCL_NPV = NPV_TCL,
+              Cashflow_n_TCL = total_po_benefit_non_TCL,
+              Cashflow_TCL = total_po_benefit_TCL))
 }
 
 
@@ -135,6 +137,12 @@ mcSimulation_results <- decisionSupport::mcSimulation(
   functionSyntax = "plainNames"
 )
 
+
+plot_cashflow(mcSimulation_object = mcSimulation_results, 
+              cashflow_var_name = "Cashflow_n_TCL")
+
+plot_cashflow(mcSimulation_object = mcSimulation_results, 
+              cashflow_var_name = "Cashflow_TCL")
 
 decisionSupport::plot_distributions(mcSimulation_object = mcSimulation_results, 
                                     vars = c("Non_TCL_NPV", "TCL_NPV"),
@@ -153,7 +161,7 @@ decisionSupport::plot_distributions(mcSimulation_object = mcSimulation_results,
 
 
 #MCall <- read.table(file = "MCResults/mcSimulationResults.csv", 
-#header = TRUE, sep  = ",")
+                    #header = TRUE, sep  = ",")
 
 #multi_EVPI(MCall, "trade_off", write_table = TRUE)
 
